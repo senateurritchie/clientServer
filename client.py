@@ -2,7 +2,6 @@
 import asyncio
 from protocol import TvAsSProtocol
 from handshake import Handshake
-import ssl
 import json
 import base64
 from threading import Thread
@@ -95,14 +94,6 @@ class Client(TvAsSProtocol,Handshake):
 
 
 			
-
-				
-
-
-ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
-ssl_context.check_hostname = False
-ssl_context.load_verify_locations('cert.crt')
-
 loop = asyncio.get_event_loop()
 coro = loop.create_connection(lambda: Client(loop),"10.0.1.28", 8888)
 

@@ -1,11 +1,8 @@
 # -*- coding:utf8 -*-
 import asyncio
-import ssl
-import secrets
 import datetime
 import json
 import base64
-import hmac,hashlib
 
 from Crypto.Cipher import AES, PKCS1_OAEP
 from Crypto.PublicKey import RSA
@@ -43,10 +40,6 @@ class Server(EventDispatcher,Handshake):
 			raise e
 
 	def run(self):
-
-		ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-		ssl_context.check_hostname = False
-		ssl_context.load_cert_chain('cert.crt', 'key.key')
 
 		loop = asyncio.get_event_loop()
 		coro = loop.create_server(self.buildProtocol,None, 8888)
@@ -88,7 +81,6 @@ class Server(EventDispatcher,Handshake):
 		"""
 		protocol = e.data["protocol"]
 		data = e.data["data"]
-		print("on rentre")
 
 		if protocol.session_key is None:
 			self.handshake(protocol,data)
@@ -106,7 +98,6 @@ class Server(EventDispatcher,Handshake):
 		@param protocol est le client qui recoit les données
 		@param data les données
 		"""
-
 		cipher = AES.new(protocol.session_key,AES.MODE_CBC)
 		ct = cipher.encrypt(pad(data,AES.block_size))
 		iv = cipher.iv
